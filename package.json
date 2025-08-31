@@ -1,0 +1,15 @@
+{
+  "name": "pokedex-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write '**/*.{ts,tsx,md}'"
+  },
+  "devDependencies": {
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@8.9.0"
+}
