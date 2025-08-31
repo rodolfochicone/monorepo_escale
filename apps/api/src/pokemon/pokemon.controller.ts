@@ -6,12 +6,17 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('pokemons')
 export class PokemonController {
-  constructor(private readonly pokemonService: PokemonService) {}
+  constructor(private readonly pokemonService: PokemonService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
+  }
+
+  @Get('/health')
+  healthCheck() {
+    return { status: 'ok', message: 'Pokemon API is working!' };
   }
 
   @Get()

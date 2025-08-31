@@ -5,7 +5,7 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 
 @Injectable()
 export class PokemonService {
-  constructor(private readonly pokemonRepository: PokemonRepository) {}
+  constructor(private readonly pokemonRepository: PokemonRepository) { }
 
   async create(createPokemonDto: any) {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${createPokemonDto.name.toLowerCase()}`);
@@ -22,8 +22,16 @@ export class PokemonService {
     return this.pokemonRepository.create(pokemonData);
   }
 
-  findAll() {
-    return this.pokemonRepository.findAll();
+  async findAll() {
+    try {
+      console.log('🔍 PokemonService.findAll() - Iniciando busca por todos os pokémons...');
+      const result = await this.pokemonRepository.findAll();
+      console.log('✅ PokemonService.findAll() - Busca concluída:', result?.length || 0, 'pokémons encontrados');
+      return result;
+    } catch (error) {
+      console.error('❌ PokemonService.findAll() - Erro:', error);
+      throw error;
+    }
   }
 
   async findOne(id: number) {
