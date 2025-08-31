@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../pokemon.entity';
 import { pokemons } from '../pokemon.entity';
-import { eq } from 'drizzle-orm';
+import { eq, like, sql, count, and } from 'drizzle-orm';
 
 @Injectable()
 export class PokemonRepository {
@@ -11,8 +11,20 @@ export class PokemonRepository {
   ) { }
 
   async create(createPokemonDto: any) {
-    const [newPokemon] = await this.db.insert(pokemons).values(createPokemonDto).returning();
-    return newPokemon;
+    try {
+      console.log('💾 PokemonRepository.create() - Inserindo no banco de dados:', createPokemonDto);
+      const [newPokemon] = await this.db.insert(pokemons).values(createPokemonDto).returning();
+      console.log('✅ PokemonRepository.create() - Pokémon criado:', newPokemon);
+      return newPokemon;
+    } catch (error) {
+      console.error('❌ PokemonRepository.create() - Erro na inserção:', {
+        message: error instanceof Error ? error.message : 'Erro desconhecido',
+        stack: error instanceof Error ? error.stack : undefined,
+        data: createPokemonDto,
+        error: error
+      });
+      throw error;
+    }
   }
 
   async findAll() {
@@ -23,6 +35,61 @@ export class PokemonRepository {
       return result;
     } catch (error) {
       console.error('❌ PokemonRepository.findAll() - Erro na query:', error);
+      throw error;
+    }
+  }
+
+  async findAllPaginated(options: {
+    limit: number;
+    offset: number;
+    search?: string;
+    type?: string;
+  }) {
+    try {
+      console.log(`🔍 PokemonRepository.findAllPaginated() - Executando query paginada: limit=${options.limit}, offset=${options.offset}`);
+
+      // Construir condições de filtro
+      const conditions = [];
+
+      if (options.search) {
+        conditions.push(like(pokemons.name, `%${options.search.toLowerCase()}%`));
+      }
+
+      if (options.type) {
+        // Para buscar por tipo no array JSON, usamos o operador @>
+        conditions.push(sql`${pokemons.types} @> ${JSON.stringify([options.type.toLowerCase()])}`);
+      }
+
+      const whereCondition = conditions.length > 0 ? and(...conditions) : undefined;
+
+      // Query principal com paginação
+      const dataQuery = this.db
+        .select()
+        .from(pokemons)
+        .where(whereCondition)
+        .limit(options.limit)
+        .offset(options.offset)
+        .orderBy(pokemons.id);
+
+      // Query para contar o total
+      const countQuery = this.db
+        .select({ count: count() })
+        .from(pokemons)
+        .where(whereCondition);
+
+      // Executar ambas as queries
+      const [data, totalResult] = await Promise.all([
+        dataQuery,
+        countQuery
+      ]);
+
+      const total = totalResult[0]?.count || 0;
+
+      console.log(`✅ PokemonRepository.findAllPaginated() - Query executada: ${data.length}/${total} registros`);
+
+      return { data, total };
+    } catch (error) {
+      console.error('❌ PokemonRepository.findAllPaginated() - Erro na query:', error);
       throw error;
     }
   }

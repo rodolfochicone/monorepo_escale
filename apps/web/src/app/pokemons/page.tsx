@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PokemonList } from "@/components/pokemon/pokemon-list";
+import { PokemonFilters } from "@/components/pokemon/pokemon-filters";
+import { Pagination, PaginationInfo } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { usePokemon } from "@/hooks/use-pokemon";
 import { Pokemon } from "@/types/pokemon";
@@ -14,13 +16,29 @@ export default function PokemonsPage() {
     loading,
     error,
     pokemonCount,
-    fetchPokemons,
-    clearError
+    clearError,
+
+    // Paginação
+    paginationData,
+    currentPage,
+    pageSize,
+    searchQuery,
+    typeFilter,
+    fetchPaginatedPokemons,
+    setPage,
+    setPageSize,
+    setSearchQuery,
+    setTypeFilter,
+    resetFilters,
+    totalPages,
+    totalItems,
+    hasNextPage,
+    hasPrevPage,
   } = usePokemon();
 
   useEffect(() => {
-    fetchPokemons();
-  }, [fetchPokemons]);
+    fetchPaginatedPokemons();
+  }, [fetchPaginatedPokemons]);
 
   const handlePokemonClick = (pokemon: Pokemon) => {
     router.push(`/pokemons/${pokemon.id}`);
@@ -40,8 +58,8 @@ export default function PokemonsPage() {
               Minha Coleção Pokémon
             </h1>
             <p className="text-muted-foreground">
-              {pokemonCount > 0
-                ? `${pokemonCount} Pokémon${pokemonCount !== 1 ? "s" : ""} na sua coleção`
+              {totalItems > 0
+                ? `${totalItems} Pokémon${totalItems !== 1 ? "s" : ""} na sua coleção`
                 : "Sua coleção está vazia"
               }
             </p>
@@ -71,30 +89,83 @@ export default function PokemonsPage() {
           </div>
         )}
 
+        {/* Filtros de busca */}
+        <PokemonFilters
+          searchQuery={searchQuery}
+          typeFilter={typeFilter}
+          pageSize={pageSize}
+          onSearchChange={setSearchQuery}
+          onTypeFilterChange={setTypeFilter}
+          onPageSizeChange={setPageSize}
+          onResetFilters={resetFilters}
+          className="mb-6"
+        />
+
+        {/* Informações de paginação */}
+        {totalItems > 0 && (
+          <PaginationInfo
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            className="mb-4"
+          />
+        )}
+
         {/* Lista de Pokémons */}
         <PokemonList
           pokemons={pokemons}
           loading={loading}
           onPokemonClick={handlePokemonClick}
-          showFilters={true}
+          showFilters={false} // Desabilitado já que temos filtros personalizados
           variant="grid"
         />
 
+        {/* Paginação */}
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              hasNext={hasNextPage}
+              hasPrev={hasPrevPage}
+            />
+          </div>
+        )}
+
         {/* Call-to-action quando não há Pokémons */}
-        {!loading && pokemonCount === 0 && !error && (
+        {!loading && totalItems === 0 && !error && (
           <div className="text-center mt-12">
             <div className="max-w-md mx-auto">
-              <div className="text-8xl mb-6">✨</div>
-              <h2 className="text-2xl font-semibold mb-4">
-                Comece sua jornada Pokémon!
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Adicione seu primeiro Pokémon à coleção e comece a explorar
-                o mundo dos Pokémons com dados da PokéAPI.
-              </p>
-              <Button size="lg" onClick={handleAddPokemon}>
-                Adicionar meu primeiro Pokémon
-              </Button>
+              {searchQuery || typeFilter ? (
+                <>
+                  <div className="text-8xl mb-6">🔍</div>
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Nenhum resultado encontrado
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Não encontramos Pokémons com os filtros aplicados.
+                    Tente ajustar sua busca ou remover os filtros.
+                  </p>
+                  <Button onClick={resetFilters}>
+                    Limpar filtros
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="text-8xl mb-6">✨</div>
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Comece sua jornada Pokémon!
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Adicione seu primeiro Pokémon à coleção e comece a explorar
+                    o mundo dos Pokémons com dados da PokéAPI.
+                  </p>
+                  <Button size="lg" onClick={handleAddPokemon}>
+                    Adicionar meu primeiro Pokémon
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}

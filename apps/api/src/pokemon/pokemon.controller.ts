@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete, HttpCode, UseGuards, Query } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { PaginationDto } from './dto/pagination.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('pokemons')
@@ -19,9 +20,11 @@ export class PokemonController {
     return { status: 'ok', message: 'Pokemon API is working!' };
   }
 
+
+
   @Get()
-  findAll() {
-    return this.pokemonService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.pokemonService.findAll(paginationDto);
   }
 
   @Get(':id')

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { usePokemonStore } from '@/store/pokemon-store';
-import type { CreatePokemonDto, UpdatePokemonDto } from '@/types/pokemon';
+import type { CreatePokemonDto, UpdatePokemonDto, PaginationParams } from '@/types/pokemon';
 
 export const usePokemon = () => {
   const {
@@ -15,6 +15,21 @@ export const usePokemon = () => {
     deletePokemon,
     clearError,
     clearSelectedPokemon,
+
+    // Estado da paginação
+    paginationData,
+    currentPage,
+    pageSize,
+    searchQuery,
+    typeFilter,
+
+    // Ações de paginação
+    fetchPaginatedPokemons,
+    setPage,
+    setPageSize,
+    setSearchQuery,
+    setTypeFilter,
+    resetFilters,
   } = usePokemonStore();
 
   // Hook customizado com memoização das ações
@@ -46,6 +61,31 @@ export const usePokemon = () => {
     clearSelectedPokemon();
   }, [clearSelectedPokemon]);
 
+  // Callbacks para ações de paginação
+  const handleFetchPaginatedPokemons = useCallback((params?: PaginationParams) => {
+    return fetchPaginatedPokemons(params);
+  }, [fetchPaginatedPokemons]);
+
+  const handleSetPage = useCallback((page: number) => {
+    setPage(page);
+  }, [setPage]);
+
+  const handleSetPageSize = useCallback((size: number) => {
+    setPageSize(size);
+  }, [setPageSize]);
+
+  const handleSetSearchQuery = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, [setSearchQuery]);
+
+  const handleSetTypeFilter = useCallback((type: string) => {
+    setTypeFilter(type);
+  }, [setTypeFilter]);
+
+  const handleResetFilters = useCallback(() => {
+    resetFilters();
+  }, [resetFilters]);
+
   // Funcões utilitárias
   const getPokemonById = useCallback((id: number) => {
     return pokemons.find(pokemon => pokemon.id === id) || null;
@@ -76,6 +116,13 @@ export const usePokemon = () => {
     hasPokemons,
     isLoadingPokemons,
 
+    // Estado da paginação
+    paginationData,
+    currentPage,
+    pageSize,
+    searchQuery,
+    typeFilter,
+
     // Ações
     fetchPokemons: handleFetchPokemons,
     fetchPokemonById: handleFetchPokemonById,
@@ -85,8 +132,22 @@ export const usePokemon = () => {
     clearError: handleClearError,
     clearSelectedPokemon: handleClearSelectedPokemon,
 
+    // Ações de paginação
+    fetchPaginatedPokemons: handleFetchPaginatedPokemons,
+    setPage: handleSetPage,
+    setPageSize: handleSetPageSize,
+    setSearchQuery: handleSetSearchQuery,
+    setTypeFilter: handleSetTypeFilter,
+    resetFilters: handleResetFilters,
+
     // Utilitários
     getPokemonById,
     searchPokemons,
+
+    // Utilitários de paginação
+    totalPages: paginationData?.meta?.totalPages || 0,
+    totalItems: paginationData?.meta?.total || 0,
+    hasNextPage: paginationData?.meta?.hasNext || false,
+    hasPrevPage: paginationData?.meta?.hasPrev || false,
   };
 };

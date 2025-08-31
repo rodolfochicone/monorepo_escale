@@ -1,33 +1,91 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PokemonRepository } from './pokemon.repository';
-import axios from 'axios';
+import { PaginationDto, PaginatedResult } from './dto/pagination.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import axios from 'axios';
 
 @Injectable()
 export class PokemonService {
   constructor(private readonly pokemonRepository: PokemonRepository) { }
 
+
+
   async create(createPokemonDto: any) {
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${createPokemonDto.name.toLowerCase()}`);
-    const { id, types, abilities, sprites } = response.data;
+    try {
+      console.log('🐾 PokemonService.create() - Iniciando criação de pokémon:', createPokemonDto.name);
 
-    const pokemonData = {
-      name: createPokemonDto.name,
-      pokedexId: id,
-      imageUrl: sprites.front_default,
-      types: types.map((t: any) => t.type.name),
-      abilities: abilities.map((a: any) => a.ability.name),
-    };
+      // Buscar dados na PokéAPI
+      console.log('🌐 Buscando dados na PokéAPI...');
+      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${createPokemonDto.name.toLowerCase()}`);
+      const { id, types, abilities, sprites } = response.data;
+      console.log('✅ Dados obtidos da PokéAPI:', { id, types: types.length, abilities: abilities.length });
 
-    return this.pokemonRepository.create(pokemonData);
+      const pokemonData = {
+        name: createPokemonDto.name,
+        pokedexId: id,
+        imageUrl: sprites.front_default,
+        types: types.map((t: any) => t.type.name),
+        abilities: abilities.map((a: any) => a.ability.name),
+      };
+
+      console.log('💾 Salvando pokémon no banco de dados...', pokemonData);
+      const result = await this.pokemonRepository.create(pokemonData);
+      console.log('✅ Pokémon criado com sucesso:', result);
+
+      return result;
+    } catch (error) {
+      console.error('❌ PokemonService.create() - Erro:', {
+        message: error instanceof Error ? error.message : 'Erro desconhecido',
+        stack: error instanceof Error ? error.stack : undefined,
+        pokemonName: createPokemonDto.name,
+        error: error
+      });
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new NotFoundException(`Pokémon '${createPokemonDto.name}' não encontrado na PokéAPI`);
+        }
+        throw new Error(`Erro ao buscar dados da PokéAPI: ${error.message}`);
+      }
+
+      throw new Error(`Erro interno ao criar pokémon: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
   }
 
-  async findAll() {
+
+
+  async findAll(paginationDto: PaginationDto = {}): Promise<PaginatedResult<any>> {
     try {
-      console.log('🔍 PokemonService.findAll() - Iniciando busca por todos os pokémons...');
-      const result = await this.pokemonRepository.findAll();
-      console.log('✅ PokemonService.findAll() - Busca concluída:', result?.length || 0, 'pokémons encontrados');
-      return result;
+      const { page = 1, limit = 10, search, type } = paginationDto;
+
+      console.log(`🔍 PokemonService.findAll() - Iniciando busca paginada: página ${page}, limite ${limit}`);
+
+      const offset = (page - 1) * limit;
+
+      const { data, total } = await this.pokemonRepository.findAllPaginated({
+        limit,
+        offset,
+        search,
+        type
+      });
+
+      const totalPages = Math.ceil(total / limit);
+      const hasNext = page < totalPages;
+      const hasPrev = page > 1;
+
+      console.log(`✅ PokemonService.findAll() - Busca concluída: ${data.length}/${total} pokémons, página ${page}/${totalPages}`);
+
+      return {
+        data,
+        meta: {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasNext,
+          hasPrev
+        }
+      };
     } catch (error) {
       console.error('❌ PokemonService.findAll() - Erro:', error);
       throw error;

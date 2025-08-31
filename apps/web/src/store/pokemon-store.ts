@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { toast } from 'sonner';
-import { Pokemon, CreatePokemonDto, UpdatePokemonDto, ApiError } from '@/types/pokemon';
+import { Pokemon, CreatePokemonDto, UpdatePokemonDto, ApiError, PaginationParams, PaginatedResponse } from '@/types/pokemon';
 import { pokemonApi } from '@/services/api';
 
 interface PokemonStore {
@@ -10,6 +10,13 @@ interface PokemonStore {
   selectedPokemon: Pokemon | null;
   loading: boolean;
   error: string | null;
+
+  // Estado da paginação
+  paginationData: PaginatedResponse<Pokemon> | null;
+  currentPage: number;
+  pageSize: number;
+  searchQuery: string;
+  typeFilter: string;
 
   // Ações
   fetchPokemons: () => Promise<void>;
@@ -20,6 +27,14 @@ interface PokemonStore {
   clearError: () => void;
   clearSelectedPokemon: () => void;
   setLoading: (loading: boolean) => void;
+
+  // Ações de paginação
+  fetchPaginatedPokemons: (params?: PaginationParams) => Promise<void>;
+  setPage: (page: number) => void;
+  setPageSize: (size: number) => void;
+  setSearchQuery: (query: string) => void;
+  setTypeFilter: (type: string) => void;
+  resetFilters: () => void;
 }
 
 export const usePokemonStore = create<PokemonStore>()(
@@ -30,6 +45,13 @@ export const usePokemonStore = create<PokemonStore>()(
       selectedPokemon: null,
       loading: false,
       error: null,
+
+      // Estado inicial da paginação
+      paginationData: null,
+      currentPage: 1,
+      pageSize: 10,
+      searchQuery: '',
+      typeFilter: '',
 
       // Ações
       fetchPokemons: async () => {
@@ -143,6 +165,64 @@ export const usePokemonStore = create<PokemonStore>()(
       clearError: () => set({ error: null }),
       clearSelectedPokemon: () => set({ selectedPokemon: null }),
       setLoading: (loading: boolean) => set({ loading }),
+
+      // Implementações das ações de paginação
+      fetchPaginatedPokemons: async (params?: PaginationParams) => {
+        set({ loading: true, error: null });
+        try {
+          const { currentPage, pageSize, searchQuery, typeFilter } = get();
+
+          const requestParams: PaginationParams = {
+            page: params?.page ?? currentPage,
+            limit: params?.limit ?? pageSize,
+            search: params?.search ?? (searchQuery || undefined),
+            type: params?.type ?? (typeFilter || undefined),
+            ...params
+          };
+
+          const paginatedResponse = await pokemonApi.getPaginatedPokemons(requestParams);
+
+          set({
+            paginationData: paginatedResponse,
+            pokemons: paginatedResponse.data, // Manter compatibilidade
+            currentPage: paginatedResponse.meta.page,
+            loading: false
+          });
+        } catch (error) {
+          const apiError = error as ApiError;
+          const errorMessage = apiError.message || 'Erro ao buscar Pokémons';
+          set({
+            error: errorMessage,
+            loading: false
+          });
+          toast.error(errorMessage);
+        }
+      },
+
+      setPage: (page: number) => {
+        set({ currentPage: page });
+        get().fetchPaginatedPokemons({ page });
+      },
+
+      setPageSize: (size: number) => {
+        set({ pageSize: size, currentPage: 1 });
+        get().fetchPaginatedPokemons({ limit: size, page: 1 });
+      },
+
+      setSearchQuery: (query: string) => {
+        set({ searchQuery: query, currentPage: 1 });
+        get().fetchPaginatedPokemons({ search: query, page: 1 });
+      },
+
+      setTypeFilter: (type: string) => {
+        set({ typeFilter: type, currentPage: 1 });
+        get().fetchPaginatedPokemons({ type, page: 1 });
+      },
+
+      resetFilters: () => {
+        set({ searchQuery: '', typeFilter: '', currentPage: 1 });
+        get().fetchPaginatedPokemons({ search: undefined, type: undefined, page: 1 });
+      },
     }),
     {
       name: 'pokemon-store',

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Pokemon, CreatePokemonDto, UpdatePokemonDto, PokemonListResponse } from '@/types/pokemon';
+import type { Pokemon, CreatePokemonDto, UpdatePokemonDto, PokemonListResponse, PaginatedResponse, PaginationParams } from '@/types/pokemon';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
 
@@ -41,9 +41,23 @@ api.interceptors.response.use(
 );
 
 export const pokemonApi = {
-  // Buscar todos os Pokémons
+  // Buscar todos os Pokémons (sem paginação - mantido para compatibilidade)
   getAllPokemons: async (): Promise<Pokemon[]> => {
-    const response = await api.get<Pokemon[]>('/pokemons');
+    const response = await api.get<PaginatedResponse<Pokemon>>('/pokemons');
+    return response.data.data; // Extrair apenas os dados do response paginado
+  },
+
+  // Buscar Pokémons com paginação
+  getPaginatedPokemons: async (params: PaginationParams = {}): Promise<PaginatedResponse<Pokemon>> => {
+    const searchParams = new URLSearchParams();
+
+    if (params.page) searchParams.append('page', params.page.toString());
+    if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.search) searchParams.append('search', params.search);
+    if (params.type) searchParams.append('type', params.type);
+
+    const url = `/pokemons${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+    const response = await api.get<PaginatedResponse<Pokemon>>(url);
     return response.data;
   },
 
