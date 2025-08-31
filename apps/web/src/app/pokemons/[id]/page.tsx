@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { usePokemon } from "@/hooks/use-pokemon";
 import { Button } from "@/components/ui/button";
@@ -10,13 +10,14 @@ import { PokemonCard } from "@/components/pokemon/pokemon-card";
 import { PokemonDetailSkeleton } from "@/components/pokemon/pokemon-skeleton";
 
 interface PokemonDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
   const router = useRouter();
+  const resolvedParams = use(params);
   const {
     selectedPokemon,
     loading,
@@ -29,7 +30,7 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const pokemonId = parseInt(params.id);
+  const pokemonId = parseInt(resolvedParams.id);
 
   useEffect(() => {
     if (pokemonId) {

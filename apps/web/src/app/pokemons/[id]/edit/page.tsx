@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { usePokemon } from "@/hooks/use-pokemon";
 import { PokemonForm } from "@/components/pokemon/pokemon-form";
@@ -8,13 +8,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface EditPokemonPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditPokemonPage({ params }: EditPokemonPageProps) {
   const router = useRouter();
+  const resolvedParams = use(params);
   const {
     selectedPokemon,
     loading,
@@ -24,7 +25,7 @@ export default function EditPokemonPage({ params }: EditPokemonPageProps) {
     clearError
   } = usePokemon();
 
-  const pokemonId = parseInt(params.id);
+  const pokemonId = parseInt(resolvedParams.id);
 
   useEffect(() => {
     if (pokemonId) {
