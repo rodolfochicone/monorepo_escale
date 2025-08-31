@@ -9,15 +9,17 @@ interface PokemonCardProps {
   pokemon: Pokemon;
   onClick?: (pokemon: Pokemon) => void;
   variant?: "default" | "compact";
+  "data-testid"?: string;
 }
 
-export function PokemonCard({ pokemon, onClick, variant = "default" }: PokemonCardProps) {
+export function PokemonCard({ pokemon, onClick, variant = "default", "data-testid": dataTestId }: PokemonCardProps) {
   const isCompact = variant === "compact";
 
   return (
     <Card
       className={`hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group animate-in fade-in-0 slide-in-from-bottom-4 ${isCompact ? "p-2" : "p-4"}`}
       onClick={() => onClick?.(pokemon)}
+      data-testid={dataTestId}
     >
       <CardContent className={isCompact ? "p-2" : "p-4"}>
         <div className="text-center space-y-3">

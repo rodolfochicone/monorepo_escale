@@ -151,9 +151,9 @@ export default function Home() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4" data-testid="pokemon-grid">
                   {filteredPokemons.map((pokemon) => (
-                    <Card key={pokemon.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                    <Card key={pokemon.id} className="hover:shadow-md transition-shadow cursor-pointer" data-testid="pokemon-card">
                       <CardContent className="p-4">
                         <Link href={`/pokemons/${pokemon.id}`}>
                           <div className="text-center space-y-2">
