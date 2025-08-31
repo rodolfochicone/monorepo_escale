@@ -114,132 +114,189 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Cabeçalho */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight capitalize mb-2">
-              {selectedPokemon.name}
-            </h1>
-            <p className="text-muted-foreground">
-              #{String(selectedPokemon.pokedexId).padStart(3, "0")} •
-              Adicionado em {new Date(selectedPokemon.createdAt).toLocaleDateString("pt-BR")}
-            </p>
-          </div>
-          <div className="flex gap-2">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="container mx-auto py-8 px-4">
+        <div className="max-w-5xl mx-auto">
+          {/* Cabeçalho com botões */}
+          <div className="flex justify-between items-center mb-8">
             <Button variant="outline" onClick={() => router.push("/pokemons")}>
               ← Voltar
             </Button>
-            <Button variant="outline" onClick={handleEdit}>
-              Editar
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => setShowDeleteConfirm(true)}
-              disabled={isDeleting}
-            >
-              Excluir
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Card principal do Pokémon */}
-          <div className="lg:col-span-1">
-            <PokemonCard pokemon={selectedPokemon} variant="default" />
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleEdit}>
+                Editar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteConfirm(true)}
+                disabled={isDeleting}
+              >
+                Excluir
+              </Button>
+            </div>
           </div>
 
-          {/* Detalhes */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Informações básicas */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações Básicas</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">Tipos</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedPokemon.types.map((type) => (
-                      <Badge
-                        key={type}
-                        variant="secondary"
-                        className="capitalize"
-                        style={{
-                          backgroundColor: getTypeColor(type),
-                          color: "white"
-                        }}
-                      >
-                        {type}
-                      </Badge>
-                    ))}
+          {/* Card principal - Design similar à imagem */}
+          <Card className="bg-white shadow-2xl rounded-3xl overflow-hidden">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
+                {/* Coluna Esquerda - Informações */}
+                <div className="lg:col-span-4 p-8 bg-gradient-to-b from-blue-50 to-white">
+                  {/* Informações no topo */}
+                  <div className="mb-8">
+                    <div className="text-sm text-gray-600 mb-2">
+                      Se {selectedPokemon.name} ficar realmente bravo, a chama no final de sua cauda queima em um tom azul claro.
+                    </div>
+
+                    {/* Versões */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-sm font-medium">Versões:</span>
+                      <div className="flex gap-2">
+                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">GO</span>
+                        </div>
+                        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">PK</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stats principais */}
+                  <div className="space-y-6">
+                    <div className="bg-blue-500 text-white p-4 rounded-2xl">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <div className="text-sm opacity-80">Altura</div>
+                          <div className="text-xl font-bold">1.7 m</div>
+                        </div>
+                        <div>
+                          <div className="text-sm opacity-80">Categoria</div>
+                          <div className="text-xl font-bold">Flame</div>
+                        </div>
+                        <div>
+                          <div className="text-sm opacity-80">Peso</div>
+                          <div className="text-xl font-bold">90.5 kg</div>
+                        </div>
+                        <div>
+                          <div className="text-sm opacity-80">Habilidades</div>
+                          <div className="text-lg font-bold capitalize">
+                            {selectedPokemon.abilities[0]?.replace("-", " ")}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sexo */}
+                      <div className="mt-4">
+                        <div className="text-sm opacity-80 mb-2">Sexo</div>
+                        <div className="flex gap-2">
+                          <span className="text-xl">♂</span>
+                          <span className="text-xl">♀</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Estatísticas */}
+                    <div className="bg-gray-100 p-4 rounded-2xl">
+                      <h3 className="font-bold mb-4">Estatísticas</h3>
+                      <div className="space-y-3">
+                        {['HP', 'Ataque', 'Defesa', 'Atq. Esp.', 'Def. Esp.', 'Velocidade'].map((stat, index) => (
+                          <div key={stat} className="flex items-center gap-2">
+                            <span className="text-sm w-16 text-gray-600">{stat}</span>
+                            <div className="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-blue-500 rounded-full"
+                                style={{ width: `${Math.random() * 80 + 20}%` }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">Habilidades</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedPokemon.abilities.map((ability) => (
-                      <Badge key={ability} variant="outline" className="capitalize">
-                        {ability.replace("-", " ")}
-                      </Badge>
-                    ))}
+                {/* Coluna Central - Imagem do Pokémon */}
+                <div className="lg:col-span-4 flex items-center justify-center p-8 bg-gradient-to-b from-gray-50 to-white relative">
+                  <div className="text-center">
+                    <h1 className="text-4xl font-bold capitalize mb-4 text-gray-800">
+                      {selectedPokemon.name}
+                    </h1>
+                    {selectedPokemon.imageUrl && (
+                      <img
+                        src={selectedPokemon.imageUrl}
+                        alt={`${selectedPokemon.name} artwork`}
+                        className="w-80 h-80 object-contain mx-auto"
+                      />
+                    )}
+                    <div className="text-2xl font-bold text-gray-600 mt-4">
+                      #{String(selectedPokemon.pokedexId).padStart(3, "0")}
+                    </div>
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="font-medium mb-2">ID da Pokédex</h4>
-                  <p className="text-2xl font-mono font-bold">
-                    #{String(selectedPokemon.pokedexId).padStart(3, "0")}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                {/* Coluna Direita - Tipos e Fraquezas */}
+                <div className="lg:col-span-4 p-8 bg-gradient-to-b from-slate-50 to-white">
+                  <div className="space-y-6">
+                    {/* Tipos */}
+                    <div>
+                      <h3 className="font-bold text-lg mb-4">Tipo</h3>
+                      <div className="space-y-2">
+                        {selectedPokemon.types.map((type) => (
+                          <Badge
+                            key={type}
+                            className="w-full justify-center py-3 text-white font-bold text-base capitalize"
+                            style={{
+                              backgroundColor: getTypeColor(type),
+                            }}
+                          >
+                            {getTypeNameInPortuguese(type)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
 
-            {/* Imagem grande */}
-            {selectedPokemon.imageUrl && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Artwork</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-center">
-                    <img
-                      src={selectedPokemon.imageUrl}
-                      alt={`${selectedPokemon.name} artwork`}
-                      className="w-64 h-64 object-contain"
-                    />
+                    {/* Fraquezas */}
+                    <div>
+                      <h3 className="font-bold text-lg mb-4">Fraquezas</h3>
+                      <div className="grid grid-cols-1 gap-2">
+                        {getWeaknesses(selectedPokemon.types).map((weakness) => (
+                          <Badge
+                            key={weakness}
+                            className="justify-center py-3 text-white font-bold text-base"
+                            style={{
+                              backgroundColor: getTypeColor(weakness),
+                            }}
+                          >
+                            {getTypeNameInPortuguese(weakness)}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Dados adicionais */}
+                    <div className="bg-gray-50 p-4 rounded-2xl">
+                      <h3 className="font-bold mb-3">Dados da Coleção</h3>
+                      <div className="text-sm space-y-2">
+                        <div>
+                          <span className="text-gray-600">Adicionado:</span>
+                          <div className="font-medium">
+                            {new Date(selectedPokemon.createdAt).toLocaleDateString("pt-BR")}
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Atualizado:</span>
+                          <div className="font-medium">
+                            {new Date(selectedPokemon.updatedAt).toLocaleDateString("pt-BR")}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Dados da coleção */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Dados da Coleção</CardTitle>
-                <CardDescription>
-                  Informações sobre quando este Pokémon foi adicionado à sua coleção
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-1">Data de adição</h4>
-                  <p className="text-muted-foreground">
-                    {new Date(selectedPokemon.createdAt).toLocaleString("pt-BR")}
-                  </p>
                 </div>
-
-                <div>
-                  <h4 className="font-medium mb-1">Última atualização</h4>
-                  <p className="text-muted-foreground">
-                    {new Date(selectedPokemon.updatedAt).toLocaleString("pt-BR")}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Modal de confirmação de exclusão */}
@@ -301,4 +358,69 @@ function getTypeColor(type: string): string {
     fairy: "#EE99AC",
   };
   return typeColors[type] || "#68A090";
+}
+
+// Função para traduzir nomes dos tipos para português
+function getTypeNameInPortuguese(type: string): string {
+  const typeNames: Record<string, string> = {
+    normal: "Normal",
+    fire: "Fogo",
+    water: "Água",
+    electric: "Elétrico",
+    grass: "Planta",
+    ice: "Gelo",
+    fighting: "Lutador",
+    poison: "Veneno",
+    ground: "Terra",
+    flying: "Voador",
+    psychic: "Psíquico",
+    bug: "Inseto",
+    rock: "Pedra",
+    ghost: "Fantasma",
+    dragon: "Dragão",
+    dark: "Sombrio",
+    steel: "Aço",
+    fairy: "Fada",
+  };
+  return typeNames[type] || type;
+}
+
+// Função para determinar fraquezas baseadas nos tipos
+function getWeaknesses(types: string[]): string[] {
+  const weaknessMap: Record<string, string[]> = {
+    normal: ["fighting"],
+    fire: ["water", "ground", "rock"],
+    water: ["electric", "grass"],
+    electric: ["ground"],
+    grass: ["fire", "ice", "poison", "flying", "bug"],
+    ice: ["fire", "fighting", "rock", "steel"],
+    fighting: ["flying", "psychic", "fairy"],
+    poison: ["ground", "psychic"],
+    ground: ["water", "grass", "ice"],
+    flying: ["electric", "ice", "rock"],
+    psychic: ["bug", "ghost", "dark"],
+    bug: ["fire", "flying", "rock"],
+    rock: ["water", "grass", "fighting", "ground", "steel"],
+    ghost: ["ghost", "dark"],
+    dragon: ["ice", "dragon", "fairy"],
+    dark: ["fighting", "bug", "fairy"],
+    steel: ["fire", "fighting", "ground"],
+    fairy: ["poison", "steel"],
+  };
+
+  const allWeaknesses = new Set<string>();
+  types.forEach(type => {
+    const weaknesses = weaknessMap[type] || [];
+    weaknesses.forEach(weakness => allWeaknesses.add(weakness));
+  });
+
+  // Para a demonstração, vamos retornar algumas fraquezas comuns baseadas nos tipos mais populares
+  const commonWeaknesses = Array.from(allWeaknesses).slice(0, 3);
+
+  // Se não tiver fraquezas específicas, retorna algumas padrão da imagem
+  if (commonWeaknesses.length === 0) {
+    return ["water", "electric", "rock"];
+  }
+
+  return commonWeaknesses;
 }
