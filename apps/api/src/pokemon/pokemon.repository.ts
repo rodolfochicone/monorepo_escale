@@ -46,8 +46,6 @@ export class PokemonRepository {
     type?: string;
   }) {
     try {
-      console.log(`🔍 PokemonRepository.findAllPaginated() - Executando query paginada: limit=${options.limit}, offset=${options.offset}`);
-
       // Construir condições de filtro
       const conditions = [];
 
@@ -85,9 +83,10 @@ export class PokemonRepository {
 
       const total = totalResult[0]?.count || 0;
 
-      console.log(`✅ PokemonRepository.findAllPaginated() - Query executada: ${data.length}/${total} registros`);
+      // Garantir que nunca retornemos mais registros que o limite (fallback de segurança)
+      const limitedData = data.slice(0, options.limit);
 
-      return { data, total };
+      return { data: limitedData, total };
     } catch (error) {
       console.error('❌ PokemonRepository.findAllPaginated() - Erro na query:', error);
       throw error;

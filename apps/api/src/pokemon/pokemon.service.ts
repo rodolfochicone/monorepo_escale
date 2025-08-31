@@ -58,8 +58,6 @@ export class PokemonService {
     try {
       const { page = 1, limit = 10, search, type } = paginationDto;
 
-      console.log(`🔍 PokemonService.findAll() - Iniciando busca paginada: página ${page}, limite ${limit}`);
-
       const offset = (page - 1) * limit;
 
       const { data, total } = await this.pokemonRepository.findAllPaginated({
@@ -72,8 +70,6 @@ export class PokemonService {
       const totalPages = Math.ceil(total / limit);
       const hasNext = page < totalPages;
       const hasPrev = page > 1;
-
-      console.log(`✅ PokemonService.findAll() - Busca concluída: ${data.length}/${total} pokémons, página ${page}/${totalPages}`);
 
       return {
         data,
