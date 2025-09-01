@@ -5,20 +5,17 @@ import { Pokemon, CreatePokemonDto, UpdatePokemonDto, ApiError, PaginationParams
 import { pokemonApi } from '@/services/api';
 
 interface PokemonStore {
-  // Estado
   pokemons: Pokemon[];
   selectedPokemon: Pokemon | null;
   loading: boolean;
   error: string | null;
 
-  // Estado da paginação
   paginationData: PaginatedResponse<Pokemon> | null;
   currentPage: number;
   pageSize: number;
   searchQuery: string;
   typeFilter: string;
 
-  // Ações
   fetchPokemons: () => Promise<void>;
   fetchPokemonById: (id: number) => Promise<void>;
   createPokemon: (data: CreatePokemonDto) => Promise<Pokemon | null>;
@@ -28,7 +25,6 @@ interface PokemonStore {
   clearSelectedPokemon: () => void;
   setLoading: (loading: boolean) => void;
 
-  // Ações de paginação
   fetchPaginatedPokemons: (params?: PaginationParams) => Promise<void>;
   setPage: (page: number) => void;
   setPageSize: (size: number) => void;
@@ -40,13 +36,11 @@ interface PokemonStore {
 export const usePokemonStore = create<PokemonStore>()(
   devtools(
     (set, get) => ({
-      // Estado inicial
       pokemons: [],
       selectedPokemon: null,
       loading: false,
       error: null,
 
-      // Estado inicial da paginação
       paginationData: null,
       currentPage: 1,
       pageSize: 10,
