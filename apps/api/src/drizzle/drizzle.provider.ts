@@ -12,7 +12,6 @@ export const drizzleProvider = {
       connectionString: process.env.DATABASE_URL,
     });
 
-    // Testar conexão
     try {
       const client = await pool.connect();
       console.log('✅ Conexão PostgreSQL estabelecida com sucesso!');

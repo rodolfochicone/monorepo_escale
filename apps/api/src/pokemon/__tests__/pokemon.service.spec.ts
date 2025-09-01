@@ -4,19 +4,13 @@ import axios from 'axios';
 import { PokemonService } from '../pokemon.service';
 import { PokemonRepository } from '../pokemon.repository';
 
-// Mock do axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-/**
- * Testes Unitários - PokemonService
- * Task 2.7: Validação da lógica de negócio
- */
 describe('PokemonService', () => {
   let service: PokemonService;
   let mockRepository: jest.Mocked<PokemonRepository>;
 
-  // Dados de mock para testes
   const mockPokemonApiResponse = {
     data: {
       id: 25,
@@ -49,7 +43,7 @@ describe('PokemonService', () => {
   };
 
   beforeEach(async () => {
-    // Mock do repository
+
     const mockPokemonRepository = {
       create: jest.fn(),
       findAllPaginated: jest.fn(),
@@ -71,7 +65,7 @@ describe('PokemonService', () => {
     service = module.get<PokemonService>(PokemonService);
     mockRepository = module.get(PokemonRepository);
 
-    // Reset dos mocks antes de cada teste
+
     jest.clearAllMocks();
   });
 

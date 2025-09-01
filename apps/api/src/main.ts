@@ -4,13 +4,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 
-// Carregar variáveis de ambiente do arquivo .env
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Configuração do CORS para permitir comunicação com o frontend
   app.enableCors({
     origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3003', 'http://192.168.0.107:3000', 'http://192.168.0.107:3001', 'http://192.168.0.107:3003'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -20,7 +18,6 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // Configuração do Swagger para documentação da API
   const config = new DocumentBuilder()
     .setTitle('Pokémon Management API')
     .setDescription('API completa para gerenciamento de coleção de Pokémons com integração à PokéAPI')

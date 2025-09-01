@@ -32,23 +32,19 @@ export function Pagination({
 
   const generatePageNumbers = () => {
     const pages: (number | string)[] = [];
-    const delta = 2; // Quantas páginas mostrar ao redor da página atual
+    const delta = 2;
 
     if (totalPages <= 7) {
-      // Se tem 7 ou menos páginas, mostra todas
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Sempre mostra a primeira página
       pages.push(1);
 
-      // Se a página atual está longe do início
       if (currentPage > delta + 2) {
         pages.push("...");
       }
 
-      // Páginas ao redor da atual
       const start = Math.max(2, currentPage - delta);
       const end = Math.min(totalPages - 1, currentPage + delta);
 
@@ -56,12 +52,10 @@ export function Pagination({
         pages.push(i);
       }
 
-      // Se a página atual está longe do final
       if (currentPage < totalPages - delta - 1) {
         pages.push("...");
       }
 
-      // Sempre mostra a última página
       if (totalPages > 1) {
         pages.push(totalPages);
       }
@@ -72,7 +66,6 @@ export function Pagination({
 
   const pageNumbers = generatePageNumbers();
 
-  // Calcular se pode navegar baseado na lógica local também
   const canGoPrev = hasPrev && currentPage > 1;
   const canGoNext = hasNext && currentPage < totalPages;
 
@@ -97,7 +90,6 @@ export function Pagination({
         <span className="sr-only">Página anterior</span>
       </Button>
 
-      {/* Números das páginas */}
       {pageNumbers.map((page, index) => (
         <div key={index}>
           {page === "..." ? (
@@ -120,7 +112,6 @@ export function Pagination({
         </div>
       ))}
 
-      {/* Botão Próximo */}
       <Button
         variant="outline"
         size="sm"

@@ -37,7 +37,6 @@ export const useAuthStore = create<AuthStore>()(
             const response = await authApi.login({ username, password });
             const { access_token } = response;
 
-            // Decode JWT to extract user info (basic decode for demo)
             const tokenPayload = JSON.parse(atob(access_token.split('.')[1]));
             const user = {
               userId: tokenPayload.sub,

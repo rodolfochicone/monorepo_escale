@@ -3,15 +3,10 @@ import { PokemonController } from '../pokemon.controller';
 import { PokemonService } from '../pokemon.service';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
-/**
- * Testes Unitários - PokemonController
- * Task 2.7: Validação dos endpoints e integração com guards
- */
 describe('PokemonController', () => {
   let controller: PokemonController;
   let mockService: jest.Mocked<PokemonService>;
 
-  // Mock data
   const mockPokemon = {
     id: 1,
     name: 'pikachu',
@@ -36,7 +31,6 @@ describe('PokemonController', () => {
   };
 
   beforeEach(async () => {
-    // Mock do service
     const mockPokemonService = {
       create: jest.fn(),
       findAll: jest.fn(),

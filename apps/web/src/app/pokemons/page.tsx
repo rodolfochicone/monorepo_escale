@@ -18,7 +18,6 @@ export default function PokemonsPage() {
     pokemonCount,
     clearError,
 
-    // Paginação
     paginationData,
     currentPage,
     pageSize,
@@ -51,7 +50,6 @@ export default function PokemonsPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
@@ -89,7 +87,6 @@ export default function PokemonsPage() {
           </div>
         )}
 
-        {/* Filtros de busca */}
         <PokemonFilters
           searchQuery={searchQuery}
           typeFilter={typeFilter}
@@ -101,7 +98,6 @@ export default function PokemonsPage() {
           className="mb-6"
         />
 
-        {/* Informações de paginação */}
         {totalItems > 0 && (
           <PaginationInfo
             currentPage={currentPage}
@@ -111,16 +107,14 @@ export default function PokemonsPage() {
           />
         )}
 
-        {/* Lista de Pokémons */}
         <PokemonList
           pokemons={pokemons}
           loading={loading}
           onPokemonClick={handlePokemonClick}
-          showFilters={false} // Desabilitado já que temos filtros personalizados
+          showFilters={false}
           variant="grid"
         />
 
-        {/* Paginação */}
         {totalPages > 1 && (
           <div className="mt-8 flex justify-center">
             <Pagination
@@ -133,7 +127,7 @@ export default function PokemonsPage() {
           </div>
         )}
 
-        {/* Call-to-action quando não há Pokémons */}
+
         {!loading && totalItems === 0 && !error && (
           <div className="text-center mt-12">
             <div className="max-w-md mx-auto">

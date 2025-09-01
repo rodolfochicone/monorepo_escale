@@ -1,16 +1,9 @@
 import { test, expect } from '@playwright/test';
 
-/**
- * Suite de Testes E2E - Sistema de Gerenciamento Pokémon
- * Task 2.7: Testes completos para validação das funcionalidades críticas
- */
-
-// Configuração base para todos os testes
 test.describe('Sistema de Gerenciamento Pokémon', () => {
   const BASE_URL = 'http://localhost:3003';
   const API_URL = 'http://localhost:3333';
 
-  // Dados de teste
   const testCredentials = {
     username: 'admin',
     password: 'password'
@@ -18,12 +11,10 @@ test.describe('Sistema de Gerenciamento Pokémon', () => {
 
   const testPokemon = {
     name: 'testemon',
-    expectedName: 'testemon' // Caso seja diferente após buscar da API
+    expectedName: 'testemon'
   };
 
-  // Configuração inicial para cada teste
   test.beforeEach(async ({ page }) => {
-    // Aguardar que ambos os serviços estejam online
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
   });

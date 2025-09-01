@@ -10,7 +10,6 @@ const api = axios.create({
   },
 });
 
-// Interceptor para adicionar token de autenticação
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const authStore = localStorage.getItem('auth-store');
@@ -29,7 +28,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor para tratamento de erros
 api.interceptors.response.use(
   (response) => response,
   (error) => {

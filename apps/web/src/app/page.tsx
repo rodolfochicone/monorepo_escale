@@ -27,7 +27,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPokemons, setFilteredPokemons] = useState(pokemons);
 
-  // Atualizar lista filtrada quando pokemons ou query mudarem
   useEffect(() => {
     setFilteredPokemons(searchPokemons(searchQuery));
   }, [pokemons, searchQuery, searchPokemons]);
