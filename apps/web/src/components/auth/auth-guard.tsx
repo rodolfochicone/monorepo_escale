@@ -17,19 +17,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const isPublicRoute = publicRoutes.includes(pathname);
 
   useEffect(() => {
-    // Se não está autenticado e não está em uma rota pública, redireciona para login
     if (!isAuthenticated && !isPublicRoute) {
       router.push('/login');
     }
 
-    // Se está autenticado e está na página de login, redireciona para home
     if (isAuthenticated && pathname === '/login') {
       router.push('/');
     }
   }, [isAuthenticated, isPublicRoute, pathname, router]);
 
-  // Se não está autenticado e não está em rota pública, não renderiza nada
-  // (vai redirecionar)
   if (!isAuthenticated && !isPublicRoute) {
     return null;
   }
