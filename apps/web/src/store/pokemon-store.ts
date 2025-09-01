@@ -180,7 +180,14 @@ export const usePokemonStore = create<PokemonStore>()(
             ...params
           };
 
+          console.log('🔍 Store.fetchPaginatedPokemons() - Parâmetros:', requestParams);
+
           const paginatedResponse = await pokemonApi.getPaginatedPokemons(requestParams);
+
+          console.log('📊 Store.fetchPaginatedPokemons() - Response:', {
+            data: paginatedResponse.data.length + ' pokemons',
+            meta: paginatedResponse.meta
+          });
 
           set({
             paginationData: paginatedResponse,
@@ -191,6 +198,7 @@ export const usePokemonStore = create<PokemonStore>()(
         } catch (error) {
           const apiError = error as ApiError;
           const errorMessage = apiError.message || 'Erro ao buscar Pokémons';
+          console.error('❌ Store.fetchPaginatedPokemons() - Erro:', error);
           set({
             error: errorMessage,
             loading: false
@@ -200,6 +208,7 @@ export const usePokemonStore = create<PokemonStore>()(
       },
 
       setPage: (page: number) => {
+        console.log('📄 Store.setPage() - Mudando para página:', page);
         set({ currentPage: page });
         get().fetchPaginatedPokemons({ page });
       },

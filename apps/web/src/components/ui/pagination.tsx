@@ -21,6 +21,15 @@ export function Pagination({
   hasPrev,
   className
 }: PaginationProps) {
+  console.log('🔍 Pagination Debug:', {
+    currentPage,
+    totalPages,
+    hasNext,
+    hasPrev,
+    canGoPrev: currentPage > 1,
+    canGoNext: currentPage < totalPages
+  });
+
   const generatePageNumbers = () => {
     const pages: (number | string)[] = [];
     const delta = 2; // Quantas páginas mostrar ao redor da página atual
@@ -63,6 +72,10 @@ export function Pagination({
 
   const pageNumbers = generatePageNumbers();
 
+  // Calcular se pode navegar baseado na lógica local também
+  const canGoPrev = hasPrev && currentPage > 1;
+  const canGoNext = hasNext && currentPage < totalPages;
+
   if (totalPages <= 1) {
     return null;
   }
@@ -73,8 +86,11 @@ export function Pagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={!hasPrev}
+        onClick={() => {
+          console.log('🔄 Clicou Previous - Indo para página:', currentPage - 1);
+          onPageChange(currentPage - 1);
+        }}
+        disabled={!canGoPrev}
         className="h-8 w-8 p-0"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -92,7 +108,10 @@ export function Pagination({
             <Button
               variant={currentPage === page ? "default" : "outline"}
               size="sm"
-              onClick={() => onPageChange(page as number)}
+              onClick={() => {
+                console.log('🔄 Clicou página:', page);
+                onPageChange(page as number);
+              }}
               className="h-8 w-8 p-0"
             >
               {page}
@@ -105,8 +124,11 @@ export function Pagination({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={!hasNext}
+        onClick={() => {
+          console.log('🔄 Clicou Next - Indo para página:', currentPage + 1);
+          onPageChange(currentPage + 1);
+        }}
+        disabled={!canGoNext}
         className="h-8 w-8 p-0"
       >
         <ChevronRight className="h-4 w-4" />
