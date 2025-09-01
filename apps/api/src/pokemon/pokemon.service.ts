@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PokemonRepository } from './pokemon.repository';
 import { PaginationDto, PaginatedResult } from './dto/pagination.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
@@ -8,13 +8,15 @@ import axios from 'axios';
 export class PokemonService {
   constructor(private readonly pokemonRepository: PokemonRepository) { }
 
-
-
   async create(createPokemonDto: any) {
     try {
       console.log('🐾 PokemonService.create() - Iniciando criação de pokémon:', createPokemonDto.name);
 
-      // Buscar dados na PokéAPI
+      const existingPokemon = await this.pokemonRepository.findOneByName(createPokemonDto.name);
+      if (existingPokemon) {
+        throw new ConflictException(`Pokemon com nome ${createPokemonDto.name} já existe`);
+      }
+
       console.log('🌐 Buscando dados na PokéAPI...');
       const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${createPokemonDto.name.toLowerCase()}`);
       const { id, types, abilities, sprites } = response.data;
@@ -41,6 +43,10 @@ export class PokemonService {
         error: error
       });
 
+      if (error instanceof ConflictException || error instanceof NotFoundException) {
+        throw error;
+      }
+
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 404) {
           throw new NotFoundException(`Pokémon '${createPokemonDto.name}' não encontrado na PokéAPI`);
@@ -48,11 +54,13 @@ export class PokemonService {
         throw new Error(`Erro ao buscar dados da PokéAPI: ${error.message}`);
       }
 
-      throw new Error(`Erro interno ao criar pokémon: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+      if (error instanceof Error) {
+        throw new Error(`Erro interno ao criar pokémon: ${error.message}`);
+      }
+
+      throw error;
     }
   }
-
-
 
   async findAll(paginationDto: PaginationDto = {}): Promise<PaginatedResult<any>> {
     try {
@@ -91,40 +99,51 @@ export class PokemonService {
   async findOne(id: number) {
     const pokemon = await this.pokemonRepository.findOne(id);
     if (!pokemon) {
-      throw new NotFoundException(`Pokemon with ID ${id} not found`);
+      throw new NotFoundException(`Pokemon com ID ${id} não encontrado`);
     }
     return pokemon;
   }
 
   async update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    // First, check if the pokemon exists
-    await this.findOne(id);
+    const existingPokemon = await this.findOne(id);
 
     let pokemonData = {};
 
-    if (updatePokemonDto.name) {
-      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${updatePokemonDto.name.toLowerCase()}`);
-      const { id: pokedexId, types, abilities, sprites } = response.data;
-      pokemonData = {
-        name: updatePokemonDto.name,
-        pokedexId: pokedexId,
-        imageUrl: sprites.front_default,
-        types: types.map((t: any) => t.type.name),
-        abilities: abilities.map((a: any) => a.ability.name),
-        updatedAt: new Date(),
-      };
-    } else {
-      // If no name is provided, we can just update the updatedAt timestamp or handle other fields if they exist
-      pokemonData = {
-        updatedAt: new Date(),
-      };
-    }
+    try {
+      if (updatePokemonDto.name) {
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${updatePokemonDto.name.toLowerCase()}`);
+        const { id: pokedexId, types, abilities, sprites } = response.data;
+        pokemonData = {
+          name: updatePokemonDto.name,
+          pokedexId: pokedexId,
+          imageUrl: sprites.front_default,
+          types: types.map((t: any) => t.type.name),
+          abilities: abilities.map((a: any) => a.ability.name),
+          updatedAt: new Date(),
+        };
+      } else {
+        pokemonData = {
+          updatedAt: new Date(),
+        };
+      }
 
-    return this.pokemonRepository.update(id, pokemonData);
+      return this.pokemonRepository.update(id, pokemonData);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new NotFoundException(`Pokémon '${updatePokemonDto.name}' não encontrado na PokéAPI`);
+        }
+        throw new Error(`Erro ao buscar dados da PokéAPI: ${error.message}`);
+      }
+      throw error;
+    }
   }
 
   async remove(id: number) {
-    await this.findOne(id);
+    const existingPokemon = await this.findOne(id);
+    if (!existingPokemon) {
+      throw new NotFoundException(`Pokemon com ID ${id} não encontrado`);
+    }
     return this.pokemonRepository.remove(id);
   }
 }

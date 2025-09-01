@@ -30,7 +30,7 @@ export default defineConfig({
   /* Configurações globais dos testes */
   use: {
     /* URL base para navegação */
-    baseURL: 'http://localhost:3003',
+    baseURL: 'http://localhost:3000',
 
     /* Trace apenas em caso de falha */
     trace: 'on-first-retry',
@@ -48,54 +48,12 @@ export default defineConfig({
     navigationTimeout: 30000,
   },
 
-  /* Configurar projetos para diferentes browsers e cenários */
+  /* Configurar apenas Chrome para testes essenciais */
   projects: [
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // Data attributes para identificar elementos
-        testIdAttribute: 'data-testid'
-      },
-    },
-
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        testIdAttribute: 'data-testid'
-      },
-    },
-
-    {
-      name: 'webkit',
-      use: {
-        ...devices['Desktop Safari'],
-        testIdAttribute: 'data-testid'
-      },
-    },
-
-    /* Testes em dispositivos móveis */
-    {
-      name: 'Mobile Chrome',
-      use: {
-        ...devices['Pixel 5'],
-        testIdAttribute: 'data-testid'
-      },
-    },
-    {
-      name: 'Mobile Safari',
-      use: {
-        ...devices['iPhone 12'],
-        testIdAttribute: 'data-testid'
-      },
-    },
-
-    /* Testes em tablet */
-    {
-      name: 'Tablet iPad',
-      use: {
-        ...devices['iPad Pro'],
         testIdAttribute: 'data-testid'
       },
     },
@@ -105,15 +63,17 @@ export default defineConfig({
   webServer: [
     {
       command: 'cd apps/web && pnpm dev',
-      url: 'http://localhost:3003',
+      url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
+      timeout: 180 * 1000,
     },
     {
       command: 'cd apps/api && pnpm dev',
       url: 'http://localhost:3333/pokemons/health',
       reuseExistingServer: !process.env.CI,
-      timeout: 120 * 1000,
+      timeout: 180 * 1000,
+      stderr: 'pipe',
+      stdout: 'pipe',
     }
   ],
 

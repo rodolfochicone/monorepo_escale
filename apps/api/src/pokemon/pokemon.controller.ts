@@ -143,6 +143,23 @@ export class PokemonController {
     }
   })
   @ApiResponse({
+    status: 409,
+    description: 'Pokémon já existe na coleção',
+    type: ErrorResponseDto,
+    examples: {
+      'already-exists': {
+        summary: 'Pokémon duplicado',
+        value: {
+          statusCode: 409,
+          message: 'Pokemon with name pikachu already exists',
+          error: 'Conflict',
+          timestamp: '2025-08-31T20:30:00.000Z',
+          path: '/pokemons'
+        }
+      }
+    }
+  })
+  @ApiResponse({
     status: 500,
     description: 'Erro interno do servidor ou falha na PokéAPI',
     type: ErrorResponseDto,

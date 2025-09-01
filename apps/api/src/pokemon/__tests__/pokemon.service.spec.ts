@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import axios from 'axios';
 import { PokemonService } from '../pokemon.service';
 import { PokemonRepository } from '../pokemon.repository';
@@ -48,6 +48,7 @@ describe('PokemonService', () => {
       create: jest.fn(),
       findAllPaginated: jest.fn(),
       findOne: jest.fn(),
+      findOneByName: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
     };
@@ -73,6 +74,7 @@ describe('PokemonService', () => {
     it('deve criar um pokémon com sucesso', async () => {
       // Arrange
       const createDto = { name: 'pikachu' };
+      mockRepository.findOneByName.mockResolvedValue(undefined);
       mockedAxios.get.mockResolvedValue(mockPokemonApiResponse);
       mockRepository.create.mockResolvedValue(mockPokemonEntity);
 
@@ -94,6 +96,7 @@ describe('PokemonService', () => {
     it('deve lançar NotFoundException quando pokémon não é encontrado na PokéAPI', async () => {
       // Arrange
       const createDto = { name: 'inexistente' };
+      mockRepository.findOneByName.mockResolvedValue(undefined);
       const notFoundError = {
         response: { status: 404 }
       };
@@ -109,6 +112,7 @@ describe('PokemonService', () => {
     it('deve tratar erro de conexão com a PokéAPI', async () => {
       // Arrange
       const createDto = { name: 'pikachu' };
+      mockRepository.findOneByName.mockResolvedValue(undefined);
       const connectionError = new Error('Network Error');
       mockedAxios.get.mockRejectedValue(connectionError);
       mockedAxios.isAxiosError.mockReturnValue(true);
@@ -120,10 +124,11 @@ describe('PokemonService', () => {
     it('deve tratar erro de banco de dados durante criação', async () => {
       // Arrange
       const createDto = { name: 'pikachu' };
+      mockRepository.findOneByName.mockResolvedValue(undefined);
       const databaseError = new Error('Database error');
       mockedAxios.get.mockResolvedValue(mockPokemonApiResponse);
-      mockRepository.create.mockRejectedValue(databaseError);
       mockedAxios.isAxiosError.mockReturnValue(false);
+      mockRepository.create.mockRejectedValue(databaseError);
 
       // Act & Assert
       await expect(service.create(createDto)).rejects.toThrow('Erro interno ao criar pokémon: Database error');
@@ -132,6 +137,7 @@ describe('PokemonService', () => {
     it('deve converter nome para lowercase antes de buscar na API', async () => {
       // Arrange
       const createDto = { name: 'PIKACHU' };
+      mockRepository.findOneByName.mockResolvedValue(undefined);
       mockedAxios.get.mockResolvedValue(mockPokemonApiResponse);
       mockRepository.create.mockResolvedValue(mockPokemonEntity);
 
@@ -140,6 +146,19 @@ describe('PokemonService', () => {
 
       // Assert
       expect(mockedAxios.get).toHaveBeenCalledWith('https://pokeapi.co/api/v2/pokemon/pikachu');
+    });
+
+    it('deve lançar ConflictException quando pokémon já existe', async () => {
+      // Arrange
+      const createDto = { name: 'pikachu' };
+      mockRepository.findOneByName.mockResolvedValue(mockPokemonEntity);
+
+      // Act & Assert
+      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow('Pokemon com nome pikachu já existe');
+      expect(mockRepository.findOneByName).toHaveBeenCalledWith('pikachu');
+      expect(mockedAxios.get).not.toHaveBeenCalled();
+      expect(mockRepository.create).not.toHaveBeenCalled();
     });
   });
 

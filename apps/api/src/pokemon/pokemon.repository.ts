@@ -46,7 +46,6 @@ export class PokemonRepository {
     type?: string;
   }) {
     try {
-      // Construir condições de filtro
       const conditions = [];
 
       if (options.search) {
@@ -54,13 +53,11 @@ export class PokemonRepository {
       }
 
       if (options.type) {
-        // Para buscar por tipo no array JSON, usamos o operador @>
         conditions.push(sql`${pokemons.types} @> ${JSON.stringify([options.type.toLowerCase()])}`);
       }
 
       const whereCondition = conditions.length > 0 ? and(...conditions) : undefined;
 
-      // Query principal com paginação
       const dataQuery = this.db
         .select()
         .from(pokemons)
@@ -69,13 +66,11 @@ export class PokemonRepository {
         .offset(options.offset)
         .orderBy(pokemons.id);
 
-      // Query para contar o total
       const countQuery = this.db
         .select({ count: count() })
         .from(pokemons)
         .where(whereCondition);
 
-      // Executar ambas as queries
       const [data, totalResult] = await Promise.all([
         dataQuery,
         countQuery
@@ -83,7 +78,6 @@ export class PokemonRepository {
 
       const total = totalResult[0]?.count || 0;
 
-      // Garantir que nunca retornemos mais registros que o limite (fallback de segurança)
       const limitedData = data.slice(0, options.limit);
 
       return { data: limitedData, total };
@@ -91,6 +85,12 @@ export class PokemonRepository {
       console.error('❌ PokemonRepository.findAllPaginated() - Erro na query:', error);
       throw error;
     }
+  }
+
+  async findOneByName(name: string) {
+    const [result] = await this.db.select().from(pokemons).where(eq(pokemons.name, name));
+    console.log('✅ PokemonRepository.findOneByName() - Pokémon encontrado:', result);
+    return result;
   }
 
   async findOne(id: number) {
