@@ -143,7 +143,7 @@ describe('PokemonController', () => {
   describe('findOne', () => {
     it('deve retornar pokémon por ID', async () => {
       // Arrange
-      const pokemonId = '1';
+      const pokemonId = 1;
       mockService.findOne.mockResolvedValue(mockPokemon);
 
       // Act
@@ -154,9 +154,9 @@ describe('PokemonController', () => {
       expect(result).toEqual(mockPokemon);
     });
 
-    it('deve converter string ID para number', async () => {
+    it('deve funcionar com diferentes IDs numéricos', async () => {
       // Arrange
-      const pokemonId = '123';
+      const pokemonId = 123;
       mockService.findOne.mockResolvedValue(mockPokemon);
 
       // Act
@@ -166,23 +166,20 @@ describe('PokemonController', () => {
       expect(mockService.findOne).toHaveBeenCalledWith(123);
     });
 
-    it('deve retornar undefined quando pokémon não existe', async () => {
+    it('deve propagar NotFoundException quando pokémon não existe', async () => {
       // Arrange
-      const pokemonId = '999';
-      mockService.findOne.mockResolvedValue(undefined);
+      const pokemonId = 999;
+      mockService.findOne.mockRejectedValue(new Error('Pokemon with ID 999 not found'));
 
-      // Act
-      const result = await controller.findOne(pokemonId);
-
-      // Assert
-      expect(result).toBeUndefined();
+      // Act & Assert
+      await expect(controller.findOne(pokemonId)).rejects.toThrow('Pokemon with ID 999 not found');
     });
   });
 
   describe('update', () => {
     it('deve atualizar pokémon com sucesso', async () => {
       // Arrange
-      const pokemonId = '1';
+      const pokemonId = 1;
       const updateDto = { name: 'raichu' };
       const updatedPokemon = { ...mockPokemon, name: 'raichu' };
       mockService.update.mockResolvedValue(updatedPokemon);
@@ -195,9 +192,9 @@ describe('PokemonController', () => {
       expect(result).toEqual(updatedPokemon);
     });
 
-    it('deve converter string ID para number', async () => {
+    it('deve funcionar com diferentes IDs numéricos', async () => {
       // Arrange
-      const pokemonId = '456';
+      const pokemonId = 456;
       const updateDto = { name: 'raichu' };
       mockService.update.mockResolvedValue(mockPokemon);
 
@@ -212,7 +209,7 @@ describe('PokemonController', () => {
   describe('remove', () => {
     it('deve remover pokémon com sucesso', async () => {
       // Arrange
-      const pokemonId = '1';
+      const pokemonId = 1;
       mockService.remove.mockResolvedValue(mockPokemon);
 
       // Act
@@ -223,9 +220,9 @@ describe('PokemonController', () => {
       expect(result).toEqual(mockPokemon);
     });
 
-    it('deve converter string ID para number', async () => {
+    it('deve funcionar com diferentes IDs numéricos', async () => {
       // Arrange
-      const pokemonId = '789';
+      const pokemonId = 789;
       mockService.remove.mockResolvedValue(mockPokemon);
 
       // Act
@@ -275,7 +272,7 @@ describe('PokemonController', () => {
 
     it('deve propagar erro do service na atualização', async () => {
       // Arrange
-      const pokemonId = '1';
+      const pokemonId = 1;
       const updateDto = { name: 'raichu' };
       const error = new Error('Update failed');
       mockService.update.mockRejectedValue(error);
@@ -286,7 +283,7 @@ describe('PokemonController', () => {
 
     it('deve propagar erro do service na remoção', async () => {
       // Arrange
-      const pokemonId = '1';
+      const pokemonId = 1;
       const error = new Error('Delete failed');
       mockService.remove.mockRejectedValue(error);
 
