@@ -73,7 +73,7 @@ PostgreSQL (via Docker)
 ### 1️⃣ **Clone e Setup**
 ```bash
 # Clone o repositório
-git clone <repository-url>
+git clone git@github.com:rodolfochicone/monorepo_escale.git
 cd monorepo_escale
 
 # Instalar dependências
