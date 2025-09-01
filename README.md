@@ -335,7 +335,7 @@ pnpm build
 ### 💬 **Suporte:**
 - **Issues**: GitHub Issues para bugs e sugestões
 - **Discussions**: GitHub Discussions para perguntas
-- **Email**: suporte@pokemon-manager.com
+- **Email**: rodolfochiconemd@gmail.com
 
 ---
 
