@@ -84,12 +84,6 @@ export function Header() {
                       </Link>
                     </Button>
                   )}
-                  <Button size="sm" asChild className="hover:scale-105 transition-transform">
-                    <Link href="/pokemons/new">
-                      <span className="hidden sm:inline">Adicionar</span>
-                      <span className="sm:hidden">+</span>
-                    </Link>
-                  </Button>
                 </div>
 
                 {/* Logout Button */}
