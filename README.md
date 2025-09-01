@@ -360,6 +360,6 @@ MIT License - Copyright (c) 2025 Pokémon Management Platform
 
 ---
 
-**🎯 Sistema Pokémon Management Platform - Desenvolvido com ❤️ e as melhores práticas da indústria!**
+**🎯 Sistema Pokémon Management Platform - Desenvolvido por Rodolfo Chicone**
 
 > 🚀 **Explore a documentação interativa em:** `http://localhost:3333/api/docs`
