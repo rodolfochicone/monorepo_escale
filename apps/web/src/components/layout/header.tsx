@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { usePokemon } from "@/hooks/use-pokemon";
 import { useAuthStore } from "@/store/auth-store";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { LogOut, User } from "lucide-react";
 
 export function Header() {
@@ -15,7 +16,7 @@ export function Header() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push("/login");
   };
 
   const navigation = [
@@ -25,14 +26,17 @@ export function Header() {
   ];
 
   // Se não está autenticado e não está na página de login, não mostra navegação
-  const shouldShowNavigation = isAuthenticated || pathname === '/login';
+  const shouldShowNavigation = isAuthenticated || pathname === "/login";
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href={isAuthenticated ? "/" : "/login"} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <Link
+            href={isAuthenticated ? "/" : "/login"}
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+          >
             <div className="text-2xl animate-pulse">⚡</div>
             <span className="font-bold text-xl">PokéManager</span>
           </Link>
@@ -44,10 +48,11 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition-all duration-200 hover:text-primary hover:scale-105 ${pathname === item.href
-                    ? "text-foreground border-b-2 border-primary pb-1"
-                    : "text-muted-foreground"
-                    }`}
+                  className={`text-sm font-medium transition-all duration-200 hover:text-primary hover:scale-105 ${
+                    pathname === item.href
+                      ? "text-foreground border-b-2 border-primary pb-1"
+                      : "text-muted-foreground"
+                  }`}
                 >
                   {item.name}
                   {item.href === "/pokemons" && pokemonCount > 0 && (
@@ -62,25 +67,33 @@ export function Header() {
 
           {/* Ações Desktop */}
           <div className="flex items-center space-x-2">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {isAuthenticated ? (
               <>
                 {/* User Info */}
                 <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">{user?.username}</span>
+                  <span className="text-sm text-foreground">
+                    {user?.username}
+                  </span>
                 </div>
 
                 {/* Pokémon Count */}
                 <div className="hidden sm:flex items-center space-x-2">
                   {pokemonCount > 0 && (
-                    <Button variant="ghost" size="sm" asChild className="hover:scale-105 transition-transform">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      asChild
+                      className="hover:scale-105 transition-transform"
+                    >
                       <Link href="/pokemons">
                         <span className="hidden md:inline">
                           {pokemonCount} Pokémon{pokemonCount !== 1 ? "s" : ""}
                         </span>
-                        <span className="md:hidden">
-                          {pokemonCount}
-                        </span>
+                        <span className="md:hidden">{pokemonCount}</span>
                       </Link>
                     </Button>
                   )}
@@ -98,7 +111,7 @@ export function Header() {
                 </Button>
               </>
             ) : (
-              !pathname.startsWith('/login') && (
+              !pathname.startsWith("/login") && (
                 <Button asChild size="sm">
                   <Link href="/login">
                     <User className="h-4 w-4 mr-2" />
@@ -113,14 +126,10 @@ export function Header() {
           {isAuthenticated && (
             <div className="flex sm:hidden items-center space-x-2">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/pokemons">
-                  📚 {pokemonCount || 0}
-                </Link>
+                <Link href="/pokemons">📚 {pokemonCount || 0}</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link href="/pokemons/new">
-                  +
-                </Link>
+                <Link href="/pokemons/new">+</Link>
               </Button>
             </div>
           )}
@@ -134,10 +143,11 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-xs font-medium transition-colors hover:text-primary ${pathname === item.href
-                    ? "text-foreground"
-                    : "text-muted-foreground"
-                    }`}
+                  className={`text-xs font-medium transition-colors hover:text-primary ${
+                    pathname === item.href
+                      ? "text-foreground"
+                      : "text-muted-foreground"
+                  }`}
                 >
                   {item.name}
                 </Link>

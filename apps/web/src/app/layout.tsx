@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -17,7 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Pokémon Management Platform",
-  description: "Gerencie sua coleção pessoal de Pokémons com integração à PokéAPI",
+  description:
+    "Gerencie sua coleção pessoal de Pokémons com integração à PokéAPI",
 };
 
 export default function RootLayout({
@@ -29,14 +31,15 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background`}
+        suppressHydrationWarning={true}
       >
-        <AuthGuard>
-          <Header />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Toaster />
-        </AuthGuard>
+        <ThemeProvider>
+          <AuthGuard>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Toaster />
+          </AuthGuard>
+        </ThemeProvider>
       </body>
     </html>
   );

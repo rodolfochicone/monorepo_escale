@@ -4,7 +4,13 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { usePokemon } from "@/hooks/use-pokemon";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PokemonCard } from "@/components/pokemon/pokemon-card";
 import { PokemonDetailSkeleton } from "@/components/pokemon/pokemon-skeleton";
@@ -25,7 +31,7 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
     fetchPokemonById,
     deletePokemon,
     clearError,
-    clearSelectedPokemon
+    clearSelectedPokemon,
   } = usePokemon();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -72,13 +78,18 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
             <CardContent className="pt-6">
               <div className="text-center">
                 <div className="text-4xl mb-4">❌</div>
-                <h2 className="text-xl font-semibold mb-2">Erro ao carregar Pokémon</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  Erro ao carregar Pokémon
+                </h2>
                 <p className="text-muted-foreground mb-4">{error}</p>
                 <div className="space-x-2">
                   <Button onClick={() => fetchPokemonById(pokemonId)}>
                     Tentar novamente
                   </Button>
-                  <Button variant="outline" onClick={() => router.push("/pokemons")}>
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push("/pokemons")}
+                  >
                     Voltar à lista
                   </Button>
                 </div>
@@ -98,7 +109,9 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
             <CardContent className="pt-6">
               <div className="text-center">
                 <div className="text-4xl mb-4">🔍</div>
-                <h2 className="text-xl font-semibold mb-2">Pokémon não encontrado</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  Pokémon não encontrado
+                </h2>
                 <p className="text-muted-foreground mb-4">
                   O Pokémon solicitado não existe na sua coleção
                 </p>
@@ -114,7 +127,7 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-5xl mx-auto">
           {/* Cabeçalho com botões */}
@@ -137,15 +150,16 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
           </div>
 
           {/* Card principal - Design similar à imagem */}
-          <Card className="bg-white shadow-2xl rounded-3xl overflow-hidden">
+          <Card className="bg-white dark:bg-card shadow-2xl rounded-3xl overflow-hidden">
             <CardContent className="p-0">
               <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
                 {/* Coluna Esquerda - Informações */}
-                <div className="lg:col-span-4 p-8 bg-gradient-to-b from-blue-50 to-white">
+                <div className="lg:col-span-4 p-8 bg-gradient-to-b from-blue-50 to-white dark:from-blue-950/20 dark:to-background">
                   {/* Informações no topo */}
                   <div className="mb-8">
-                    <div className="text-sm text-gray-600 mb-2">
-                      Se {selectedPokemon.name} ficar realmente bravo, a chama no final de sua cauda queima em um tom azul claro.
+                    <div className="text-sm text-muted-foreground mb-2">
+                      Se {selectedPokemon.name} ficar realmente bravo, a chama
+                      no final de sua cauda queima em um tom azul claro.
                     </div>
 
                     {/* Versões */}
@@ -197,13 +211,22 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
                     </div>
 
                     {/* Estatísticas */}
-                    <div className="bg-gray-100 p-4 rounded-2xl">
+                    <div className="bg-gray-100 dark:bg-muted/30 p-4 rounded-2xl">
                       <h3 className="font-bold mb-4">Estatísticas</h3>
                       <div className="space-y-3">
-                        {['HP', 'Ataque', 'Defesa', 'Atq. Esp.', 'Def. Esp.', 'Velocidade'].map((stat, index) => (
+                        {[
+                          "HP",
+                          "Ataque",
+                          "Defesa",
+                          "Atq. Esp.",
+                          "Def. Esp.",
+                          "Velocidade",
+                        ].map((stat, index) => (
                           <div key={stat} className="flex items-center gap-2">
-                            <span className="text-sm w-16 text-gray-600">{stat}</span>
-                            <div className="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <span className="text-sm w-16 text-muted-foreground">
+                              {stat}
+                            </span>
+                            <div className="flex-1 bg-gray-200 dark:bg-muted/50 h-2 rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-blue-500 rounded-full"
                                 style={{ width: `${Math.random() * 80 + 20}%` }}
@@ -217,9 +240,9 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
                 </div>
 
                 {/* Coluna Central - Imagem do Pokémon */}
-                <div className="lg:col-span-4 flex items-center justify-center p-8 bg-gradient-to-b from-gray-50 to-white relative">
+                <div className="lg:col-span-4 flex items-center justify-center p-8 bg-gradient-to-b from-gray-50 to-white dark:from-muted/20 dark:to-background relative">
                   <div className="text-center">
-                    <h1 className="text-4xl font-bold capitalize mb-4 text-gray-800">
+                    <h1 className="text-4xl font-bold capitalize mb-4 text-foreground">
                       {selectedPokemon.name}
                     </h1>
                     {selectedPokemon.imageUrl && (
@@ -229,14 +252,14 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
                         className="w-80 h-80 object-contain mx-auto"
                       />
                     )}
-                    <div className="text-2xl font-bold text-gray-600 mt-4">
+                    <div className="text-2xl font-bold text-muted-foreground mt-4">
                       #{String(selectedPokemon.pokedexId).padStart(3, "0")}
                     </div>
                   </div>
                 </div>
 
                 {/* Coluna Direita - Tipos e Fraquezas */}
-                <div className="lg:col-span-4 p-8 bg-gradient-to-b from-slate-50 to-white">
+                <div className="lg:col-span-4 p-8 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900/20 dark:to-background">
                   <div className="space-y-6">
                     {/* Tipos */}
                     <div>
@@ -260,34 +283,44 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
                     <div>
                       <h3 className="font-bold text-lg mb-4">Fraquezas</h3>
                       <div className="grid grid-cols-1 gap-2">
-                        {getWeaknesses(selectedPokemon.types).map((weakness) => (
-                          <Badge
-                            key={weakness}
-                            className="justify-center py-3 text-white font-bold text-base"
-                            style={{
-                              backgroundColor: getTypeColor(weakness),
-                            }}
-                          >
-                            {getTypeNameInPortuguese(weakness)}
-                          </Badge>
-                        ))}
+                        {getWeaknesses(selectedPokemon.types).map(
+                          (weakness) => (
+                            <Badge
+                              key={weakness}
+                              className="justify-center py-3 text-white font-bold text-base"
+                              style={{
+                                backgroundColor: getTypeColor(weakness),
+                              }}
+                            >
+                              {getTypeNameInPortuguese(weakness)}
+                            </Badge>
+                          ),
+                        )}
                       </div>
                     </div>
 
                     {/* Dados adicionais */}
-                    <div className="bg-gray-50 p-4 rounded-2xl">
+                    <div className="bg-gray-50 dark:bg-muted/20 p-4 rounded-2xl">
                       <h3 className="font-bold mb-3">Dados da Coleção</h3>
                       <div className="text-sm space-y-2">
                         <div>
-                          <span className="text-gray-600">Adicionado:</span>
+                          <span className="text-muted-foreground">
+                            Adicionado:
+                          </span>
                           <div className="font-medium">
-                            {new Date(selectedPokemon.createdAt).toLocaleDateString("pt-BR")}
+                            {new Date(
+                              selectedPokemon.createdAt,
+                            ).toLocaleDateString("pt-BR")}
                           </div>
                         </div>
                         <div>
-                          <span className="text-gray-600">Atualizado:</span>
+                          <span className="text-muted-foreground">
+                            Atualizado:
+                          </span>
                           <div className="font-medium">
-                            {new Date(selectedPokemon.updatedAt).toLocaleDateString("pt-BR")}
+                            {new Date(
+                              selectedPokemon.updatedAt,
+                            ).toLocaleDateString("pt-BR")}
                           </div>
                         </div>
                       </div>
@@ -301,12 +334,14 @@ export default function PokemonDetailPage({ params }: PokemonDetailPageProps) {
 
         {/* Modal de confirmação de exclusão */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 z-50">
             <Card className="max-w-md w-full">
               <CardHeader>
                 <CardTitle>Confirmar Exclusão</CardTitle>
                 <CardDescription>
-                  Tem certeza que deseja excluir <strong className="capitalize">{selectedPokemon.name}</strong> da sua coleção?
+                  Tem certeza que deseja excluir{" "}
+                  <strong className="capitalize">{selectedPokemon.name}</strong>{" "}
+                  da sua coleção?
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -409,9 +444,9 @@ function getWeaknesses(types: string[]): string[] {
   };
 
   const allWeaknesses = new Set<string>();
-  types.forEach(type => {
+  types.forEach((type) => {
     const weaknesses = weaknessMap[type] || [];
-    weaknesses.forEach(weakness => allWeaknesses.add(weakness));
+    weaknesses.forEach((weakness) => allWeaknesses.add(weakness));
   });
 
   // Para a demonstração, vamos retornar algumas fraquezas comuns baseadas nos tipos mais populares

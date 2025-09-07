@@ -7,8 +7,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { usePokemon } from "@/hooks/use-pokemon";
 import { Pokemon } from "@/types/pokemon";
 
@@ -83,8 +97,7 @@ export function PokemonForm({ pokemon, mode }: PokemonFormProps) {
           <CardDescription>
             {mode === "create"
               ? "Digite o nome de um Pokémon para adicioná-lo à sua coleção. Os dados serão buscados automaticamente na PokéAPI."
-              : "Edite as informações do Pokémon selecionado."
-            }
+              : "Edite as informações do Pokémon selecionado."}
           </CardDescription>
         </CardHeader>
 
@@ -105,7 +118,8 @@ export function PokemonForm({ pokemon, mode }: PokemonFormProps) {
                       />
                     </FormControl>
                     <FormDescription>
-                      Digite o nome exato como aparece na PokéAPI (geralmente em inglês e minúsculo)
+                      Digite o nome exato como aparece na PokéAPI (geralmente em
+                      inglês e minúsculo)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -126,7 +140,9 @@ export function PokemonForm({ pokemon, mode }: PokemonFormProps) {
                     )}
                     <div>
                       <p className="font-medium capitalize">{pokemon.name}</p>
-                      <p className="text-sm text-muted-foreground">#{pokemon.pokedexId}</p>
+                      <p className="text-sm text-muted-foreground">
+                        #{pokemon.pokedexId}
+                      </p>
                       <div className="flex gap-1 mt-1">
                         {pokemon.types.map((type) => (
                           <span
@@ -154,9 +170,17 @@ export function PokemonForm({ pokemon, mode }: PokemonFormProps) {
                     </h4>
                     <div className="mt-2 text-sm text-blue-700 dark:text-blue-200">
                       <ul className="list-disc list-inside space-y-1">
-                        <li>Digite o nome exato do Pokémon (ex: "pikachu", "charizard")</li>
-                        <li>Os dados serão buscados automaticamente na PokéAPI</li>
-                        <li>Informações como tipo, habilidades e imagem serão preenchidas automaticamente</li>
+                        <li>
+                          Digite o nome exato do Pokémon (ex:
+                          &quot;pikachu&quot;, &quot;charizard&quot;)
+                        </li>
+                        <li>
+                          Os dados serão buscados automaticamente na PokéAPI
+                        </li>
+                        <li>
+                          Informações como tipo, habilidades e imagem serão
+                          preenchidas automaticamente
+                        </li>
                         <li>O Pokémon será adicionado à sua coleção pessoal</li>
                       </ul>
                     </div>
@@ -174,8 +198,7 @@ export function PokemonForm({ pokemon, mode }: PokemonFormProps) {
                     ? "Salvando..."
                     : mode === "create"
                       ? "Adicionar Pokémon"
-                      : "Salvar Alterações"
-                  }
+                      : "Salvar Alterações"}
                 </Button>
                 <Button
                   type="button"

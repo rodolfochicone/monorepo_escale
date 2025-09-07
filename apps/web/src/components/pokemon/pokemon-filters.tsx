@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import { Search, X, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -20,9 +26,24 @@ interface PokemonFiltersProps {
 }
 
 const pokemonTypes = [
-  "normal", "fire", "water", "electric", "grass", "ice",
-  "fighting", "poison", "ground", "flying", "psychic", "bug",
-  "rock", "ghost", "dragon", "dark", "steel", "fairy"
+  "normal",
+  "fire",
+  "water",
+  "electric",
+  "grass",
+  "ice",
+  "fighting",
+  "poison",
+  "ground",
+  "flying",
+  "psychic",
+  "bug",
+  "rock",
+  "ghost",
+  "dragon",
+  "dark",
+  "steel",
+  "fairy",
 ];
 
 const pageSizeOptions = [5, 10, 20, 50];
@@ -35,7 +56,7 @@ export function PokemonFilters({
   onTypeFilterChange,
   onPageSizeChange,
   onResetFilters,
-  className
+  className,
 }: PokemonFiltersProps) {
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
 
@@ -85,7 +106,12 @@ export function PokemonFilters({
         {/* Controles */}
         <div className="flex items-center gap-2">
           {/* Filtro por tipo */}
-          <Select value={typeFilter || "all"} onValueChange={(value) => onTypeFilterChange(value === "all" ? "" : value)}>
+          <Select
+            value={typeFilter || "all"}
+            onValueChange={(value) =>
+              onTypeFilterChange(value === "all" ? "" : value)
+            }
+          >
             <SelectTrigger className="w-[140px]">
               <Filter className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Tipo" />
@@ -101,7 +127,10 @@ export function PokemonFilters({
           </Select>
 
           {/* Items por página */}
-          <Select value={pageSize.toString()} onValueChange={(value) => onPageSizeChange(parseInt(value))}>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(value) => onPageSizeChange(parseInt(value))}
+          >
             <SelectTrigger className="w-[80px]">
               <SelectValue />
             </SelectTrigger>
@@ -136,7 +165,7 @@ export function PokemonFilters({
 
           {searchQuery && (
             <Badge variant="secondary" className="gap-1">
-              Busca: "{searchQuery}"
+              Busca: &quot;{searchQuery}&quot;
               <Button
                 variant="ghost"
                 size="sm"
